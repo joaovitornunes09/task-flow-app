@@ -1,0 +1,14 @@
+services:
+  task-flow-app:
+    hostname: task-flow-app
+    container_name: task-flow-app
+    working_dir: /app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app
+    restart: always
+    ports:
+      - 5175:5175
+    command: sh -c 'pnpm i && pnpm dev --host'
