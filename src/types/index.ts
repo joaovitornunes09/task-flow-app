@@ -34,9 +34,11 @@ export interface Category {
   updatedAt: string
 }
 
-export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'COMPLETED'
-export type TaskPriority = 'LOW' | 'MEDIUM' | 'HIGH'
-export type CollaborationRole = 'OWNER' | 'COLLABORATOR' | 'VIEWER'
+import { TaskStatus, TaskPriority, CollaborationRole } from '@/enums'
+
+export { TaskStatus, TaskPriority, CollaborationRole }
+
+export * from './error'
 
 export interface Task {
   id: string

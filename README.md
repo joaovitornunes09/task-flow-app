@@ -1,195 +1,103 @@
 # Task Flow App
 
-Uma aplicação moderna de gerenciamento de tarefas construída com Vue.js 3, TypeScript, Tailwind CSS e Pinia. Este frontend integra com a API Task Flow para fornecer uma solução abrangente de gerenciamento de tarefas com autenticação de usuário, organização de tarefas, recursos de colaboração e funcionalidades de relatório.
+Uma aplicação moderna e profissional de gerenciamento de tarefas construída com Vue.js 3, TypeScript, Tailwind CSS e Pinia. Este frontend integra-se perfeitamente com a API Task Flow para fornecer uma solução completa de gerenciamento de tarefas com autenticação de usuários, organização de tarefas, ferramentas de colaboração e relatórios detalhados.
 
-## ✨ Funcionalidades Implementadas
+## ✨ Principais Funcionalidades
 
-### ✅ Funcionalidades Concluídas
+### Funcionalidades Principais
+- **Arquitetura Moderna**: Construída com Vue 3 Composition API, TypeScript e Vite para performance otimizada
+- **Design Responsivo**: Abordagem mobile-first com Tailwind CSS garantindo experiência perfeita em todos os dispositivos
+- **Sistema de Autenticação**: Autenticação segura baseada em JWT com gerenciamento de sessão persistente
+- **Gerenciamento de Tarefas**: Operações CRUD completas com rastreamento de status, níveis de prioridade e gerenciamento de prazos
+- **Organização por Categorias**: Sistema de categorização com cores para melhor organização das tarefas
+- **Colaboração em Equipe**: Permissões baseadas em papéis (Proprietário, Colaborador, Visualizador) para gerenciamento de tarefas em equipe
+- **Relatórios e Análises**: Relatórios de produtividade abrangentes com representação visual de dados
+- **Atualizações em Tempo Real**: Atualizações dinâmicas da interface com estados de carregamento otimistas
 
-1. **Configuração do Projeto & Arquitetura**
-   - Vue 3 com suporte a TypeScript
-   - Vite para desenvolvimento e build rápidos
-   - Tailwind CSS para estilização responsiva
-   - Componentes de UI inspirados no ShadCN-Vue
-   - Pinia para gerenciamento de estado
-   - Vue Router para navegação
+### Destaques Técnicos
+- **Segurança de Tipos**: Integração completa com TypeScript e definições de tipos abrangentes
+- **Gerenciamento de Estado**: Gerenciamento centralizado de estado usando stores Pinia
+- **Integração com API**: Cliente HTTP robusto com interceptadores e tratamento de erros
+- **Biblioteca de Componentes**: Componentes UI customizados inspirados em sistemas de design modernos
+- **Acessibilidade**: Interface compatível com WCAG e suporte para navegação por teclado
 
-2. **Sistema de Autenticação**
-   - Registro e login de usuários
-   - Gerenciamento de token JWT
-   - Rotas protegidas com auth guards
-   - Estado de autenticação persistente
-
-3. **Integração com API**
-   - Camada de serviço completa para API
-   - Interceptadores Axios para gerenciamento de token
-   - Chamadas de API tipadas com interfaces TypeScript
-   - Tratamento de erros e estados de carregamento
-
-4. **Roteamento & Layout**
-   - Navegação responsiva com menu mobile
-   - Rotas protegidas e exclusivas para convidados
-   - Layout limpo e moderno
-   - Menu dropdown de usuário
-
-5. **Dashboard**
-   - Visão geral de estatísticas de tarefas
-   - Botões de ações rápidas
-   - Exibição de tarefas recentes
-   - Design responsivo
-
-### 🚧 Funcionalidades Planejadas (Prontas para Implementação)
-
-6. **Gerenciamento de Tarefas (CRUD)**
-   - Criar, editar e excluir tarefas
-   - Acompanhamento de status da tarefa (TODO, IN_PROGRESS, COMPLETED)
-   - Níveis de prioridade (BAIXA, MÉDIA, ALTA)
-   - Gerenciamento de prazos
-
-7. **Sistema de Categorias**
-   - Criar e gerenciar categorias de tarefas
-   - Categorias com cores diferenciadas
-   - Filtro de tarefas por categoria
-
-8. **Recursos de Colaboração**
-   - Adicionar colaboradores às tarefas
-   - Permissões baseadas em papéis (OWNER, COLLABORATOR, VIEWER)
-   - Gerenciamento de tarefas em equipe
-
-9. **Relatórios & Análises**
-   - Relatórios de produtividade do usuário
-   - Métricas de desempenho da equipe
-   - Rastreamento de conclusão de tarefas
-   - Gráficos e visualizações
-
-10. **UI/UX Avançada**
-    - Filtros e ordenação avançados
-    - Melhorias de acessibilidade
-
-## 🚀 Começando
+## 🚀 Início Rápido
 
 ### Pré-requisitos
-
-- Node.js (v16 ou superior)
-- pnpm (recomendado) ou npm
-- API Task Flow rodando em `http://localhost:3333`
+- Docker e Docker Compose
+- Git
 
 ### Instalação
 
-1. Clone e acesse o projeto:
+1. **Clone o repositório:**
    ```bash
+   git clone https://github.com/joaovitornunes09/task-flow-app.git
    cd task-flow-app
-
-2. Instale as dependências:
-   ```bash
-   pnpm install
    ```
 
-3. Inicie o servidor de desenvolvimento:
+2. **Configure o ambiente:**
    ```bash
-   pnpm run dev
+   cp .env.example .env
    ```
 
-4. Abra seu navegador e acesse a URL fornecida (geralmente `http://localhost:5175`)
+3. **Inicie a aplicação:**
+   ```bash
+   docker compose up -d --build
+   ```
 
-### Scripts Disponíveis
+4. **Acesse a aplicação:**
+   Abra seu navegador e navegue para `http://localhost:5175`
 
-- `pnpm run dev` - Inicia o servidor de desenvolvimento
-- `pnpm run build` - Gera o build para produção
-- `pnpm run preview` - Visualiza o build de produção
-- `pnpm run typecheck` - Executa verificação de tipos do TypeScript
-- `pnpm run lint` - Executa linting (placeholder)
+### Scripts de Desenvolvimento
+
+- `pnpm run dev` - Iniciar servidor de desenvolvimento
+- `pnpm run build` - Gerar build para produção
+- `pnpm run preview` - Visualizar build de produção
+- `pnpm run typecheck` - Executar verificação de tipos TypeScript
+- `pnpm run lint` - Executar linting do código
 
 ## 🏗️ Estrutura do Projeto
 
 ```
 src/
 ├── components/
-│   ├── ui/              # Componentes reutilizáveis de UI (Button, Input, Card, etc.)
+│   ├── ui/              # Componentes reutilizáveis de UI
 │   └── AppLayout.vue    # Layout principal da aplicação
-├── views/               # Componentes de páginas
-│   ├── LoginView.vue
-│   ├── RegisterView.vue
-│   ├── DashboardView.vue
-│   ├── TasksView.vue
-│   ├── CategoriesView.vue
-│   ├── CollaborationsView.vue
-│   ├── ReportsView.vue
-│   └── ProfileView.vue
-├── stores/              # Stores do Pinia
-│   ├── auth.ts          # Estado de autenticação
-│   ├── tasks.ts         # Estado de gerenciamento de tarefas
-│   └── categories.ts    # Estado de gerenciamento de categorias
-├── services/
-│   └── api.ts           # Camada de serviço da API
-├── types/
-│   └── index.ts         # Definições de tipos do TypeScript
-├── utils/
-│   └── cn.ts            # Utilitário de classes CSS
-├── router/
-│   └── index.ts         # Configuração do Vue Router
-└── assets/
-    └── css/
-        └── main.css     # Estilos globais e imports do Tailwind
+├── views/               # Páginas da aplicação
+├── stores/              # Gerenciamento de estado (Pinia)
+├── services/            # Camada de serviços da API
+├── types/               # Definições TypeScript
+├── router/              # Configuração de rotas
+└── assets/              # Recursos estáticos
 ```
 
 ## 🔧 Stack Tecnológico
 
-- **Framework Frontend:** Vue.js 3 (Composition API)
-- **Linguagem:** TypeScript
-- **Ferramenta de Build:** Vite
+- **Frontend:** Vue.js 3 (Composition API) + TypeScript
+- **Build Tool:** Vite
 - **Estilização:** Tailwind CSS
-- **Gerenciamento de Estado:** Pinia
+- **Estado:** Pinia
 - **Roteamento:** Vue Router
-- **Cliente HTTP:** Axios
-- **Componentes de UI:** Custom components inspired by ShadCN-Vue
+- **HTTP Client:** Axios
+- **UI Components:** Componentes customizados
 - **Ícones:** Lucide Vue Next
-- **Gerenciador de Pacotes:** pnpm
 
-## 🌐 Integração com API
+## 📝 Configuração
 
-O frontend integra com a API Task Flow através dos seguintes endpoints:
-
-### Gerenciamento de Usuários
-- `POST /users/register` - Registro de usuário
-- `POST /users/login` - Autenticação de usuário
-- `GET /users/profile` - Obter perfil do usuário
-- `PUT /users/profile` - Atualizar perfil do usuário
-- `GET /users` - Obter todos os usuários
-
-### Gerenciamento de Tarefas
-- `GET /tasks` - Obter tarefas do usuário
-- `POST /tasks` - Criar nova tarefa
-- `GET /tasks/:id` - Obter tarefa por ID
-- `PUT /tasks/:id` - Atualizar tarefa
-- `DELETE /tasks/:id` - Excluir tarefa
-- `GET /tasks/assigned` - Obter tarefas atribuídas
-- `GET /tasks/category/:categoryId` - Obter tarefas por categoria
-- `GET /tasks/status/:status` - Obter tarefas por status
-
-### Categorias
-- `GET /categories` - Obter categorias do usuário
-- `POST /categories` - Criar nova categoria
-- `GET /categories/:id` - Obter categoria por ID
-- `PUT /categories/:id` - Atualizar categoria
-- `DELETE /categories/:id` - Excluir categoria
-
-### Colaboração
-- `POST /collaborations` - Adicionar colaborador
-- `GET /collaborations/task/:taskId` - Obter colaboradores da tarefa
-- `GET /collaborations/user` - Obter colaborações do usuário
-- `DELETE /collaborations/task/:taskId/user/:userId` - Remover colaborador
-- `GET /collaborations/permission/:taskId` - Verificar permissões
-
-### Relatórios
-- `GET /reports/user` - Obter relatório do usuário
-- `POST /reports/team` - Obter relatório da equipe
-- `GET /reports/completed-tasks` - Obter relatório de tarefas concluídas
-
-## 📝 Variáveis de Ambiente
-
-Crie um arquivo `.env` na raiz do projeto:
+O projeto utiliza um arquivo `.env` para configurações:
 
 ```env
 VITE_API_BASE_URL=http://localhost:3333
 ```
+
+## 🤝 Contribuição
+
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
+
+## 📄 Licença
+
+Este projeto está sob licença MIT. Veja o arquivo `LICENSE` para mais detalhes.

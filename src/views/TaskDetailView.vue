@@ -7,7 +7,8 @@ import { useTasksStore } from '@/stores/tasks'
 import { useCategoriesStore } from '@/stores/categories'
 import { useToast } from '@/composables/useToast'
 import { useDateFormat } from '@/composables/useDateFormat'
-import type { Task, TaskStatus, TaskPriority } from '@/types'
+import type { Task } from '@/types'
+import { TASK_PRIORITY_OPTIONS, TaskStatus, TaskPriority } from '@/enums'
 import {
   Card,
   CardContent,
@@ -66,19 +67,13 @@ const deleteDialogOpen = ref(false)
 const editForm = ref({
   title: '',
   description: '',
-  status: 'TODO' as TaskStatus,
-  priority: 'MEDIUM' as TaskPriority,
+  status: TaskStatus.TODO,
+  priority: TaskPriority.MEDIUM,
   dueDate: '',
   categoryId: ''
 })
 
-const priorityOptions = [
-  { value: 'LOW', label: 'Baixa', color: 'text-green-600' },
-  { value: 'MEDIUM', label: 'Média', color: 'text-yellow-600' },
-  { value: 'HIGH', label: 'Alta', color: 'text-red-600' }
-]
-
-const selectedPriority = computed(() => priorityOptions.find(p => p.value === task.value?.priority))
+const selectedPriority = computed(() => TASK_PRIORITY_OPTIONS.find(p => p.value === task.value?.priority))
 const selectedCategory = computed(() => {
   return task.value?.category?.name || 'Sem categoria'
 })
@@ -87,7 +82,7 @@ const selectedResponsible = computed(() => {
 })
 
 const isOverdue = computed(() => {
-  if (!task.value?.dueDate || task.value.status === 'COMPLETED') return false
+  if (!task.value?.dueDate || task.value.status === TaskStatus.COMPLETED) return false
   return isDateOverdue(task.value.dueDate)
 })
 
@@ -288,9 +283,9 @@ onMounted(async () => {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem v-for="priority in priorityOptions" :key="priority.value" :value="priority.value">
+                          <SelectItem v-for="priority in TASK_PRIORITY_OPTIONS" :key="priority.value" :value="priority.value">
                             <div class="flex items-center gap-2">
-                              <div class="w-2 h-2 rounded-full" :class="priority.color.replace('text-', 'bg-')"></div>
+                              <div class="w-2 h-2 rounded-full" :class="priority.bgColor"></div>
                               {{ priority.label }}
                             </div>
                           </SelectItem>

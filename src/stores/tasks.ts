@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { parseISO, isBefore } from 'date-fns'
 import type { Task, CreateTaskData, UpdateTaskData, TaskStatus } from '@/types'
+import { getErrorMessage } from '@/types'
+import { TaskStatus as TaskStatusEnum } from '@/enums'
 import apiService from '@/services/api'
 
 export const useTasksStore = defineStore('tasks', () => {
@@ -12,9 +14,9 @@ export const useTasksStore = defineStore('tasks', () => {
 
   const tasksByStatus = computed(() => {
     const grouped = {
-      TODO: [] as Task[],
-      IN_PROGRESS: [] as Task[],
-      COMPLETED: [] as Task[]
+      [TaskStatusEnum.TODO]: [] as Task[],
+      [TaskStatusEnum.IN_PROGRESS]: [] as Task[],
+      [TaskStatusEnum.COMPLETED]: [] as Task[]
     }
 
     tasks.value.forEach(task => {
@@ -29,7 +31,7 @@ export const useTasksStore = defineStore('tasks', () => {
     return tasks.value.filter(task =>
       task.dueDate &&
       isBefore(parseISO(task.dueDate), now) &&
-      task.status !== 'COMPLETED'
+      task.status !== TaskStatusEnum.COMPLETED
     )
   })
 
@@ -42,8 +44,8 @@ export const useTasksStore = defineStore('tasks', () => {
       if (response?.success) {
         tasks.value = response.data
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to fetch tasks'
+    } catch (err) {
+      error.value = getErrorMessage(err, "Failed to fetch tasks")
     } finally {
       isLoading.value = false
     }
@@ -58,8 +60,8 @@ export const useTasksStore = defineStore('tasks', () => {
       if (response?.success) {
         assignedTasks.value = response.data
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to fetch assigned tasks'
+    } catch (err) {
+      error.value = getErrorMessage(err, 'Failed to fetch assigned tasks')
     } finally {
       isLoading.value = false
     }
@@ -72,8 +74,8 @@ export const useTasksStore = defineStore('tasks', () => {
         return response.data
       }
       return null
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to fetch task'
+    } catch (err) {
+      error.value = getErrorMessage(err, 'Failed to fetch task')
       return null
     }
   }
@@ -88,8 +90,8 @@ export const useTasksStore = defineStore('tasks', () => {
         return response.data
       }
       return []
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to fetch tasks by category'
+    } catch (err) {
+      error.value = getErrorMessage(err, 'Failed to fetch tasks by category')
       return []
     } finally {
       isLoading.value = false
@@ -106,8 +108,8 @@ export const useTasksStore = defineStore('tasks', () => {
         return response.data
       }
       return []
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to fetch tasks by status'
+    } catch (err) {
+      error.value = getErrorMessage(err, 'Failed to fetch tasks by status')
       return []
     } finally {
       isLoading.value = false
@@ -130,8 +132,8 @@ export const useTasksStore = defineStore('tasks', () => {
       } else {
         throw new Error(response?.message || 'Failed to create task')
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to create task'
+    } catch (err) {
+      error.value = getErrorMessage(err, 'Failed to create task')
       return { success: false, error: error.value }
     } finally {
       isLoading.value = false
@@ -164,8 +166,8 @@ export const useTasksStore = defineStore('tasks', () => {
       } else {
         throw new Error(response?.message || 'Failed to update task')
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to update task'
+    } catch (err) {
+      error.value = getErrorMessage(err, 'Failed to update task')
       return { success: false, error: error.value }
     } finally {
       isLoading.value = false
@@ -186,8 +188,8 @@ export const useTasksStore = defineStore('tasks', () => {
       }
 
       return { success: true }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to delete task'
+    } catch (err) {
+      error.value = getErrorMessage(err, 'Failed to delete task')
       return { success: false, error: error.value }
     } finally {
       isLoading.value = false

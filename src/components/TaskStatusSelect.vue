@@ -8,7 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { CheckCircle, Clock, Calendar } from 'lucide-vue-next'
+import { TASK_STATUS_OPTIONS } from '@/enums'
+import { CheckCircle, Clock, Circle } from 'lucide-vue-next'
 
 interface Props {
   status: TaskStatus
@@ -24,15 +25,14 @@ const props = withDefaults(defineProps<Props>(), {
 })
 const emits = defineEmits<Emits>()
 
-const statusOptions = [
-  { value: 'TODO' as TaskStatus, label: 'Pendente', icon: Calendar, color: 'text-amber-600' },
-  { value: 'IN_PROGRESS' as TaskStatus, label: 'Em Progresso', icon: Clock, color: 'text-blue-600' },
-  { value: 'COMPLETED' as TaskStatus, label: 'Concluída', icon: CheckCircle, color: 'text-green-600' }
-]
+const statusOptions = TASK_STATUS_OPTIONS.map(option => ({
+  ...option,
+  icon: option.icon === 'Circle' ? Circle : option.icon === 'Clock' ? Clock : CheckCircle
+}))
 
 const selectedOption = computed(() => statusOptions.find(option => option.value === props.status))
 
-const handleStatusChange = (value: any) => {
+const handleStatusChange = (value: unknown) => {
   if (value && typeof value === 'string') {
     emits('update:status', value as TaskStatus)
   }

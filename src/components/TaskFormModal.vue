@@ -22,7 +22,9 @@ import {
 } from '@/components/ui/select'
 import { apiService } from '@/services/api'
 import { useToast } from '@/composables/useToast'
-import type { Task, CreateTaskData, UpdateTaskData, Category, User, TaskPriority } from '@/types'
+import type { Task, CreateTaskData, UpdateTaskData, Category, User } from '@/types'
+import { getErrorMessage } from '@/types'
+import { TASK_PRIORITY_OPTIONS, TaskPriority } from '@/enums'
 
 const props = defineProps<{
   open: boolean
@@ -44,7 +46,7 @@ const users = ref<User[]>([])
 const form = ref({
   title: '',
   description: '',
-  priority: 'MEDIUM' as TaskPriority,
+  priority: TaskPriority.MEDIUM,
   dueDate: '',
   categoryId: '',
   assignedUserId: ''
@@ -91,9 +93,9 @@ const resetForm = () => {
   form.value = {
     title: '',
     description: '',
-    priority: 'MEDIUM',
+    priority: TaskPriority.MEDIUM,
     dueDate: '',
-    categoryId: 'none',
+    categoryId: '',
     assignedUserId: ''
   }
   errors.value = {}
@@ -105,7 +107,7 @@ const populateForm = (task: Task) => {
     description: task.description || '',
     priority: task.priority,
     dueDate: formatDateForInput(task.dueDate),
-    categoryId: task.categoryId || 'none',
+    categoryId: task.categoryId || '',
     assignedUserId: task.assignedUserId
   }
 }
@@ -140,7 +142,7 @@ const handleSave = async () => {
         description: form.value.description || undefined,
         priority: form.value.priority,
         dueDate: form.value.dueDate || undefined,
-        categoryId: (form.value.categoryId && form.value.categoryId !== 'none') ? form.value.categoryId : undefined,
+        categoryId: (form.value.categoryId && form.value.categoryId !== '') ? form.value.categoryId : undefined,
         assignedUserId: form.value.assignedUserId
       }
       response = await apiService.createTask(data)
@@ -150,7 +152,7 @@ const handleSave = async () => {
         description: form.value.description || undefined,
         priority: form.value.priority,
         dueDate: form.value.dueDate || undefined,
-        categoryId: (form.value.categoryId && form.value.categoryId !== 'none') ? form.value.categoryId : undefined,
+        categoryId: (form.value.categoryId && form.value.categoryId !== '') ? form.value.categoryId : undefined,
         assignedUserId: form.value.assignedUserId
       }
 
@@ -168,12 +170,8 @@ const handleSave = async () => {
     } else {
       errors.value.general = response?.message || 'Erro desconhecido ao salvar tarefa'
     }
-  } catch (error: any) {
-    if (error?.response?.data?.message) {
-      errors.value.general = error.response.data.message
-    } else {
-      errors.value.general = 'Erro ao salvar tarefa. Tente novamente.'
-    }
+  } catch (error: unknown) {
+    errors.value.general = getErrorMessage(error, 'Erro ao salvar tarefa. Tente novamente.')
   } finally {
     loading.value = false
   }
@@ -245,27 +243,15 @@ onMounted(async () => {
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div class="space-y-2">
             <Label for="priority">Prioridade</Label>
-            <Select :model-value="form.priority" @update:model-value="(value: any) => form.priority = value || 'MEDIUM'">
+            <Select :model-value="form.priority" @update:model-value="(value: unknown) => form.priority = (value as TaskPriority) || TaskPriority.MEDIUM">
               <SelectTrigger>
                 <SelectValue placeholder="Selecione a prioridade" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="LOW">
+                <SelectItem v-for="priority in TASK_PRIORITY_OPTIONS" :key="priority.value" :value="priority.value">
                   <div class="flex items-center gap-2">
-                    <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                    Baixa
-                  </div>
-                </SelectItem>
-                <SelectItem value="MEDIUM">
-                  <div class="flex items-center gap-2">
-                    <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
-                    Média
-                  </div>
-                </SelectItem>
-                <SelectItem value="HIGH">
-                  <div class="flex items-center gap-2">
-                    <div class="w-2 h-2 rounded-full bg-red-500"></div>
-                    Alta
+                    <div class="w-2 h-2 rounded-full" :class="priority.bgColor"></div>
+                    {{ priority.label }}
                   </div>
                 </SelectItem>
               </SelectContent>
@@ -286,15 +272,15 @@ onMounted(async () => {
           <Label for="category">Categoria</Label>
           <Select
             :model-value="form.categoryId || undefined"
-            @update:model-value="(value: any) => {
-              form.categoryId = value === 'none' ? 'none' : (value || 'none')
+            @update:model-value="(value: unknown) => {
+              form.categoryId = (value as string) || ''
             }"
           >
             <SelectTrigger>
               <SelectValue placeholder="Selecione uma categoria (opcional)" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="none">Nenhuma categoria</SelectItem>
+              <SelectItem :value="null">Nenhuma categoria</SelectItem>
               <SelectItem v-for="category in categories" :key="category.id" :value="category.id">
                 <div class="flex items-center gap-2">
                   <div
@@ -320,8 +306,8 @@ onMounted(async () => {
           <Select
             v-else
             :model-value="form.assignedUserId || undefined"
-            @update:model-value="(value: any) => {
-              form.assignedUserId = value || ''
+            @update:model-value="(value: unknown) => {
+              form.assignedUserId = (value as string) || ''
             }"
           >
             <SelectTrigger :class="{ 'border-red-500': errors.assignedUserId }">
@@ -342,8 +328,8 @@ onMounted(async () => {
         </div>
       </div>
 
-      <DialogFooter class="flex flex-col sm:flex-row gap-2 sm:gap-0">
-        <Button variant="outline" @click="handleCancel" :disabled="loading" class="w-full sm:w-auto">
+      <DialogFooter class="flex flex-col sm:flex-row sm:gap-0">
+        <Button variant="outline" @click="handleCancel" :disabled="loading" class="w-full sm:w-auto mr-2">
           Cancelar
         </Button>
         <Button @click="handleSave" :disabled="!isFormValid || loading" class="w-full sm:w-auto">

@@ -13,6 +13,7 @@ import {
   AlertCircleIcon
 } from 'lucide-vue-next'
 import type { TaskCollaboration } from '@/types'
+import { TaskPriority, TASK_PRIORITY_OPTIONS } from '@/enums'
 
 const { formatDate } = useDateFormat()
 
@@ -157,13 +158,12 @@ onMounted(() => {
                 <span class="text-gray-500">Prioridade:</span>
                 <div class="flex items-center gap-1">
                   <div class="w-2 h-2 rounded-full" :class="{
-                    'bg-red-500': collaboration.task.priority === 'HIGH',
-                    'bg-yellow-500': collaboration.task.priority === 'MEDIUM',
-                    'bg-green-500': collaboration.task.priority === 'LOW'
+                    'bg-red-500': collaboration.task?.priority === TaskPriority.HIGH,
+                    'bg-yellow-500': collaboration.task?.priority === TaskPriority.MEDIUM,
+                    'bg-green-500': collaboration.task?.priority === TaskPriority.LOW
                   }"></div>
                   <span class="font-medium">
-                    {{ collaboration.task.priority === 'HIGH' ? 'Alta' :
-                       collaboration.task.priority === 'MEDIUM' ? 'Média' : 'Baixa' }}
+                    {{ TASK_PRIORITY_OPTIONS.find(p => p.value === collaboration.task?.priority)?.label || 'N/A' }}
                   </span>
                 </div>
               </div>

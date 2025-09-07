@@ -11,6 +11,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   CheckSquareIcon,
   PlusIcon,
   SearchIcon,
@@ -20,6 +27,8 @@ import {
   UsersIcon
 } from 'lucide-vue-next'
 import type { Task, Category } from '@/types'
+import { TASK_STATUS_OPTIONS, TASK_PRIORITY_OPTIONS, TaskStatus, TaskPriority } from '@/enums'
+import { getErrorMessage } from '@/types'
 
 const router = useRouter()
 const toast = useToast()
@@ -35,9 +44,9 @@ const showCollaborationModal = ref(false)
 const selectedTaskForCollaboration = ref<Task | null>(null)
 
 const searchQuery = ref('')
-const selectedStatus = ref('')
-const selectedPriority = ref('')
-const selectedCategory = ref('')
+const selectedStatus = ref('all')
+const selectedPriority = ref('all')
+const selectedCategory = ref('all')
 
 const filteredTasks = computed(() => {
   return tasks.value.filter(task => {
@@ -45,9 +54,9 @@ const filteredTasks = computed(() => {
       task.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       (task.description && task.description.toLowerCase().includes(searchQuery.value.toLowerCase()))
 
-    const matchesStatus = !selectedStatus.value || task.status === selectedStatus.value
-    const matchesPriority = !selectedPriority.value || task.priority === selectedPriority.value
-    const matchesCategory = !selectedCategory.value || task.categoryId === selectedCategory.value
+    const matchesStatus = selectedStatus.value === 'all' || task.status === selectedStatus.value
+    const matchesPriority = selectedPriority.value === 'all' || task.priority === selectedPriority.value
+    const matchesCategory = selectedCategory.value === 'all' || task.categoryId === selectedCategory.value
 
     return matchesSearch && matchesStatus && matchesPriority && matchesCategory
   })
@@ -70,8 +79,8 @@ const loadTasks = async () => {
     if (categoriesResponse?.success) {
       categories.value = categoriesResponse.data
     }
-  } catch (error: any) {
-    errorMessage.value = error?.response?.data?.message || 'Erro ao carregar dados. Tente novamente.'
+  } catch (error) {
+    errorMessage.value = getErrorMessage(error, 'Erro ao carregar dados. Tente novamente.')
   } finally {
     loading.value = false
   }
@@ -129,9 +138,9 @@ const deleteTask = async (task: Task) => {
 
 const getStatusLabel = (status: string) => {
   switch (status) {
-    case 'TODO': return 'A Fazer'
-    case 'IN_PROGRESS': return 'Em Progresso'
-    case 'COMPLETED': return 'Concluído'
+    case TaskStatus.TODO: return 'A Fazer'
+    case TaskStatus.IN_PROGRESS: return 'Em Progresso'
+    case TaskStatus.COMPLETED: return 'Concluído'
     default: return status
   }
 }
@@ -195,35 +204,50 @@ onMounted(() => {
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-              <select v-model="selectedStatus"
-                class="w-full h-12 px-4 text-base border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none">
-                <option value="">Todos</option>
-                <option value="TODO">A Fazer</option>
-                <option value="IN_PROGRESS">Em Progresso</option>
-                <option value="COMPLETED">Concluído</option>
-              </select>
+              <Select :model-value="selectedStatus" @update:model-value="(value: unknown) => selectedStatus = value as string">
+                <SelectTrigger class="w-full h-12">
+                  <SelectValue placeholder="Todos os status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem v-for="status in TASK_STATUS_OPTIONS" :key="status.value" :value="status.value">
+                    {{ status.label }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Prioridade</label>
-              <select v-model="selectedPriority"
-                class="w-full h-12 px-4 text-base border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none">
-                <option value="">Todas</option>
-                <option value="HIGH">Alta</option>
-                <option value="MEDIUM">Média</option>
-                <option value="LOW">Baixa</option>
-              </select>
+              <Select :model-value="selectedPriority" @update:model-value="(value: unknown) => selectedPriority = value as string">
+                <SelectTrigger class="w-full h-12">
+                  <SelectValue placeholder="Todas as prioridades" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas</SelectItem>
+                  <SelectItem v-for="priority in TASK_PRIORITY_OPTIONS" :key="priority.value" :value="priority.value">
+                    <div class="flex items-center space-x-2">
+                      <div class="w-2 h-2 rounded-full" :class="priority.bgColor"></div>
+                      <span>{{ priority.label }}</span>
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Categoria</label>
-              <select v-model="selectedCategory"
-                class="w-full h-12 px-4 text-base border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none">
-                <option value="">Todas</option>
-                <option v-for="category in categories" :key="category.id" :value="category.id">
-                  {{ category.name }}
-                </option>
-              </select>
+              <Select :model-value="selectedCategory" @update:model-value="(value: unknown) => selectedCategory = value as string">
+                <SelectTrigger class="w-full h-12">
+                  <SelectValue placeholder="Todas as categorias" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas</SelectItem>
+                  <SelectItem v-for="category in categories" :key="category.id" :value="category.id">
+                    {{ category.name }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </CardContent>
@@ -242,9 +266,9 @@ onMounted(() => {
           <CardContent class="p-6">
             <div class="flex items-start justify-between mb-4">
               <div class="w-3 h-3 rounded-full" :class="{
-                'bg-red-500': task.priority === 'HIGH',
-                'bg-yellow-500': task.priority === 'MEDIUM',
-                'bg-green-500': task.priority === 'LOW'
+                'bg-red-500': task.priority === TaskPriority.HIGH,
+                'bg-yellow-500': task.priority === TaskPriority.MEDIUM,
+                'bg-green-500': task.priority === TaskPriority.LOW
               }"></div>
               <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Button variant="ghost" @click.stop="openCollaborationModal(task)" class=" hover:bg-gray-100"
@@ -274,9 +298,9 @@ onMounted(() => {
               <div class="flex items-center justify-between">
                 <span class="text-sm text-gray-500">Status:</span>
                 <span class="text-xs font-medium px-3 py-1 rounded-full" :class="{
-                  'bg-green-100 text-green-700': task.status === 'COMPLETED',
-                  'bg-blue-100 text-blue-700': task.status === 'IN_PROGRESS',
-                  'bg-gray-100 text-gray-600': task.status === 'TODO'
+                  'bg-green-100 text-green-700': task.status === TaskStatus.COMPLETED,
+                  'bg-blue-100 text-blue-700': task.status === TaskStatus.IN_PROGRESS,
+                  'bg-gray-100 text-gray-600': task.status === TaskStatus.TODO
                 }">
                   {{ getStatusLabel(task.status) }}
                 </span>
@@ -313,7 +337,7 @@ onMounted(() => {
           <CheckSquareIcon class="h-16 w-16 text-gray-300 mx-auto mb-4" />
           <h3 class="text-lg font-semibold text-gray-900 mb-2">Nenhuma tarefa encontrada</h3>
           <p class="text-gray-500 mb-6">
-            {{ searchQuery || selectedStatus || selectedPriority || selectedCategory
+            {{ searchQuery || (selectedStatus !== 'all') || (selectedPriority !== 'all') || (selectedCategory !== 'all')
               ? 'Tente ajustar os filtros ou' : 'Comece criando sua primeira tarefa' }}
           </p>
           <Button @click="openCreateModal">

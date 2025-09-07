@@ -17,8 +17,8 @@ export const useCategoriesStore = defineStore('categories', () => {
       if (response?.success) {
         categories.value = response.data
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to fetch categories'
+    } catch (err) {
+      error.value = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to fetch categories'
     } finally {
       isLoading.value = false
     }
@@ -31,7 +31,7 @@ export const useCategoriesStore = defineStore('categories', () => {
         return response.data
       }
       return null
-    } catch (err: any) {
+    } catch (err) {
       return null
     }
   }
@@ -49,8 +49,8 @@ export const useCategoriesStore = defineStore('categories', () => {
       } else {
         throw new Error(response?.message || 'Failed to create category')
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to create category'
+    } catch (err) {
+      error.value = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create category'
       return { success: false, error: error.value }
     } finally {
       isLoading.value = false
@@ -74,8 +74,8 @@ export const useCategoriesStore = defineStore('categories', () => {
       } else {
         throw new Error(response?.message || 'Failed to update category')
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to update category'
+    } catch (err) {
+      error.value = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update category'
       return { success: false, error: error.value }
     } finally {
       isLoading.value = false
@@ -95,8 +95,8 @@ export const useCategoriesStore = defineStore('categories', () => {
       }
 
       return { success: true }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to delete category'
+    } catch (err) {
+      error.value = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete category'
       return { success: false, error: error.value }
     } finally {
       isLoading.value = false

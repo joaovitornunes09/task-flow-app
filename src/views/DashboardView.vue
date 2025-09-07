@@ -19,6 +19,8 @@ import {
   BarChart3Icon,
   SettingsIcon
 } from 'lucide-vue-next'
+import { TaskStatus, TaskPriority } from '@/enums'
+import type { Task } from '@/types'
 
 const authStore = useAuthStore()
 const toast = useToast()
@@ -26,37 +28,18 @@ const { formatDate, compareDates } = useDateFormat()
 
 const user = computed(() => authStore.user)
 
-const tasks = ref<any[]>([])
+const tasks = ref<Task[]>([])
 const loading = ref(false)
 const showTaskForm = ref(false)
 
 const totalTasks = computed(() => tasks.value.length)
-const inProgressTasks = computed(() => tasks.value.filter(t => t.status === 'IN_PROGRESS').length)
-const completedTasks = computed(() => tasks.value.filter(t => t.status === 'COMPLETED').length)
-const pendingTasks = computed(() => tasks.value.filter(t => t.status === 'TODO').length)
+const inProgressTasks = computed(() => tasks.value.filter(t => t.status === TaskStatus.IN_PROGRESS).length)
+const completedTasks = computed(() => tasks.value.filter(t => t.status === TaskStatus.COMPLETED).length)
+const pendingTasks = computed(() => tasks.value.filter(t => t.status === TaskStatus.TODO).length)
 
-// Cálculo de produtividade baseado em tarefas concluídas vs total
 const productivity = computed(() => {
   if (totalTasks.value === 0) return 0
   return Math.round((completedTasks.value / totalTasks.value) * 100)
-})
-
-// Tarefas concluídas esta semana
-const completedThisWeek = computed(() => {
-  const oneWeekAgo = new Date()
-  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
-  
-  return tasks.value.filter(task => 
-    task.status === 'COMPLETED' && 
-    task.updatedAt && 
-    new Date(task.updatedAt) >= oneWeekAgo
-  ).length
-})
-
-// Progresso semanal baseado em meta de tarefas
-const weeklyProgress = computed(() => {
-  if (totalTasks.value === 0) return 0
-  return Math.round((completedThisWeek.value / Math.max(totalTasks.value * 0.3, 1)) * 100)
 })
 
 const recentTasks = computed(() =>
@@ -81,22 +64,22 @@ const loadDashboardData = async () => {
     if (response?.success) {
       tasks.value = response.data
     }
-  } catch (error: any) {
+  } catch (error) {
     toast.info('Modo offline ativo', 'Usando dados de demonstração enquanto o servidor não está disponível')
     tasks.value = [
       {
         id: '1',
         title: 'Finalizar relatório mensal',
         description: 'Finalizar o relatório mensal da equipe',
-        status: 'IN_PROGRESS',
-        priority: 'HIGH',
+        status: TaskStatus.IN_PROGRESS,
+        priority: TaskPriority.HIGH,
         dueDate: formatISO(new Date(Date.now() + 86400000)),
         categoryId: 'cat1',
         assignedUserId: 'user1',
         createdById: 'user1',
         createdAt: formatISO(new Date()),
         updatedAt: formatISO(new Date()),
-        category: { 
+        category: {
           id: 'cat1',
           name: 'Trabalho',
           description: 'Trabalho',
@@ -120,15 +103,15 @@ const loadDashboardData = async () => {
         id: '2',
         title: 'Revisar apresentação do cliente',
         description: 'Revisar slides da apresentação',
-        status: 'TODO',
-        priority: 'MEDIUM',
+        status: TaskStatus.TODO,
+        priority: TaskPriority.MEDIUM,
         dueDate: formatISO(new Date(Date.now() + 172800000)),
         categoryId: 'cat1',
         assignedUserId: 'user1',
         createdById: 'user1',
         createdAt: formatISO(new Date()),
         updatedAt: formatISO(new Date()),
-        category: { 
+        category: {
           id: 'cat1',
           name: 'Trabalho',
           description: 'Trabalho',
@@ -152,15 +135,15 @@ const loadDashboardData = async () => {
         id: '3',
         title: 'Reunião de equipe',
         description: 'Reunião semanal da equipe',
-        status: 'COMPLETED',
-        priority: 'LOW',
+        status: TaskStatus.COMPLETED,
+        priority: TaskPriority.LOW,
         dueDate: formatISO(new Date(Date.now() - 86400000)),
         categoryId: 'cat2',
         assignedUserId: 'user1',
         createdById: 'user1',
         createdAt: formatISO(new Date()),
         updatedAt: formatISO(new Date()),
-        category: { 
+        category: {
           id: 'cat2',
           name: 'Reuniões',
           description: 'Reuniões',
@@ -292,7 +275,7 @@ onMounted(async () => {
                   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
                     <div class="flex items-center space-x-3">
                       <div class="w-3 h-3 rounded-full flex-shrink-0"
-                        :class="task.priority === 'high' ? 'bg-red-500' : task.priority === 'medium' ? 'bg-yellow-500' : 'bg-green-500'">
+                        :class="task.priority.toLowerCase() === TaskPriority.HIGH.toLowerCase() ? 'bg-red-500' : task.priority.toLowerCase() === TaskPriority.MEDIUM.toLowerCase() ? 'bg-yellow-500' : 'bg-green-500'">
                       </div>
                       <div class="min-w-0 flex-1">
                         <p class="font-medium text-gray-900 truncate">{{ task.title }}</p>
@@ -300,11 +283,11 @@ onMounted(async () => {
                       </div>
                     </div>
                     <div class="self-end sm:self-auto">
-                      <p class="text-xs font-medium px-2 py-1 rounded-full inline-block" :class="task.status === 'completed' ? 'bg-green-100 text-green-700' :
-                        task.status === 'in_progress' ? 'bg-blue-100 text-blue-700' :
+                      <p class="text-xs font-medium px-2 py-1 rounded-full inline-block" :class="task.status.toLowerCase() === TaskStatus.COMPLETED.toLowerCase() ? 'bg-green-100 text-green-700' :
+                        task.status.toLowerCase() === TaskStatus.IN_PROGRESS.toLowerCase() ? 'bg-blue-100 text-blue-700' :
                           'bg-gray-100 text-gray-600'">
-                        {{ task.status === 'completed' ? 'Concluída' :
-                          task.status === 'in_progress' ? 'Em Progresso' : 'Pendente' }}
+                        {{ task.status.toLowerCase() === TaskStatus.COMPLETED.toLowerCase() ? 'Concluída' :
+                          task.status.toLowerCase() === TaskStatus.IN_PROGRESS.toLowerCase() ? 'Em Progresso' : 'Pendente' }}
                       </p>
                     </div>
                   </div>
@@ -373,7 +356,7 @@ onMounted(async () => {
     </div>
 
     <!-- Task Form Modal -->
-    <TaskFormModal 
+    <TaskFormModal
       v-model:open="showTaskForm"
       mode="create"
       @task-saved="handleTaskSaved"

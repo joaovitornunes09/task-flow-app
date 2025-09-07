@@ -1,4 +1,5 @@
 import { toast } from "vue-sonner";
+import type { ApiErrorResponse } from '@/types/error';
 
 export function useToast() {
   return {
@@ -23,7 +24,7 @@ export function useToast() {
       messages: {
         loading: string;
         success: string | ((data: T) => string);
-        error: string | ((err: any) => string);
+        error: string | ((err: ApiErrorResponse) => string);
       }
     ) => toast.promise(promise, messages),
   };

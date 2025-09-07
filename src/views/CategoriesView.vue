@@ -15,6 +15,7 @@ import {
   RotateCcwIcon
 } from 'lucide-vue-next'
 import type { Category } from '@/types'
+import { getErrorMessage } from '@/types'
 
 const toast = useToast()
 const { formatDate } = useDateFormat()
@@ -37,8 +38,8 @@ const loadCategories = async () => {
     } else {
       errorMessage.value = 'Erro ao carregar categorias'
     }
-  } catch (error: any) {
-    errorMessage.value = error?.response?.data?.message || 'Erro ao carregar categorias. Tente novamente.'
+  } catch (error) {
+    errorMessage.value = getErrorMessage(error, 'Erro ao carregar categorias. Tente novamente.')
   } finally {
     loading.value = false
   }
@@ -82,7 +83,7 @@ const deleteCategory = async (category: Category) => {
         }
       },
       error: (error) => {
-        return error?.response?.data?.message || 'Erro ao excluir categoria. Tente novamente.'
+        return getErrorMessage(error, 'Erro ao excluir categoria. Tente novamente.')
       }
     })
   }

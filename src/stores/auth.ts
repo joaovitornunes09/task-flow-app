@@ -36,8 +36,8 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       return { success: true }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Login failed'
+    } catch (err) {
+      error.value = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Login failed'
       return { success: false, error: error.value }
     } finally {
       isLoading.value = false
@@ -57,8 +57,8 @@ export const useAuthStore = defineStore('auth', () => {
       } else {
         throw new Error(registerResponse?.message || 'Registration failed')
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Registration failed'
+    } catch (err) {
+      error.value = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Registration failed'
       return { success: false, error: error.value }
     } finally {
       isLoading.value = false
@@ -74,7 +74,7 @@ export const useAuthStore = defineStore('auth', () => {
       if (profile) {
         user.value = profile
       }
-    } catch (err: any) {
+    } catch (err) {
       clearAuth()
     } finally {
       isLoading.value = false
@@ -92,8 +92,8 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       return { success: true }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Profile update failed'
+    } catch (err) {
+      error.value = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Profile update failed'
       return { success: false, error: error.value }
     } finally {
       isLoading.value = false

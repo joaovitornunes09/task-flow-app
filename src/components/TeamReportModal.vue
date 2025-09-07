@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { apiService } from '@/services/api'
 import { UsersIcon, CheckCircleIcon, AlertCircleIcon, ClockIcon } from 'lucide-vue-next'
+import { getErrorMessage } from '@/types'
 import type { User, TeamMemberReport } from '@/types'
 
 const props = defineProps<{
@@ -60,12 +61,8 @@ const generateReport = async () => {
     if (response?.success) {
       teamReport.value = response.data
     }
-  } catch (error: any) {
-    if (error?.response?.data?.message) {
-      errors.value.general = error.response.data.message
-    } else {
-      errors.value.general = 'Erro ao gerar relatório da equipe. Tente novamente.'
-    }
+  } catch (error) {
+    errors.value.general = getErrorMessage(error, 'Erro ao gerar relatório da equipe. Tente novamente.')
   } finally {
     generating.value = false
   }

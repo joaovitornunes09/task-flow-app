@@ -33,12 +33,11 @@ onMounted(() => {
 
 <template>
   <div class="space-y-6">
-    <div class="flex items-center justify-between">
-      <h3 class="text-lg font-semibold text-gray-900">Meu Relatório</h3>
-      <Button variant="outline" size="sm" @click="loadReport" class="flex-shrink-0">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+      <h3 class="text-base sm:text-lg font-semibold text-gray-900">Meu Relatório</h3>
+      <Button variant="outline" size="sm" @click="loadReport" class="w-full sm:w-auto flex-shrink-0">
         <RotateCcwIcon class="h-4 w-4 mr-2" />
-        <span class="hidden sm:inline">Atualizar</span>
-        <span class="sm:hidden">Atualizar</span>
+        <span>Atualizar</span>
       </Button>
     </div>
 
@@ -54,58 +53,58 @@ onMounted(() => {
     </div>
 
     <div v-else-if="report" class="space-y-6">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card>
-          <CardContent class="p-4">
-            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-3">
-              <div class="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-                <TagIcon class="h-5 w-5 text-blue-600" />
+          <CardContent class="p-3 sm:p-4">
+            <div class="flex items-start gap-3 min-h-[60px]">
+              <div class="p-2 bg-blue-100 rounded-lg flex-shrink-0 mt-1">
+                <TagIcon class="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
               </div>
-              <div class="text-center sm:text-left">
-                <p class="text-xl sm:text-2xl font-bold text-gray-900">{{ report.totalTasks }}</p>
-                <p class="text-xs sm:text-sm text-gray-500">Total de Tarefas</p>
+              <div class="flex-1 overflow-hidden">
+                <p class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 leading-tight">{{ report.totalTasks }}</p>
+                <p class="text-xs sm:text-sm text-gray-500 leading-tight break-words">Total de Tarefas</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent class="p-4">
-            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-3">
-              <div class="p-2 bg-green-100 rounded-lg flex-shrink-0">
-                <CheckCircleIcon class="h-5 w-5 text-green-600" />
+          <CardContent class="p-3 sm:p-4">
+            <div class="flex items-start gap-3 min-h-[60px]">
+              <div class="p-2 bg-green-100 rounded-lg flex-shrink-0 mt-1">
+                <CheckCircleIcon class="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
               </div>
-              <div class="text-center sm:text-left">
-                <p class="text-xl sm:text-2xl font-bold text-gray-900">{{ report.tasksByStatus.COMPLETED }}</p>
-                <p class="text-xs sm:text-sm text-gray-500">Concluídas</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent class="p-4">
-            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-3">
-              <div class="p-2 bg-yellow-100 rounded-lg flex-shrink-0">
-                <ClockIcon class="h-5 w-5 text-yellow-600" />
-              </div>
-              <div class="text-center sm:text-left">
-                <p class="text-xl sm:text-2xl font-bold text-gray-900">{{ report.tasksByStatus.IN_PROGRESS }}</p>
-                <p class="text-xs sm:text-sm text-gray-500">Em Progresso</p>
+              <div class="flex-1 overflow-hidden">
+                <p class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 leading-tight">{{ report.tasksByStatus.COMPLETED }}</p>
+                <p class="text-xs sm:text-sm text-gray-500 leading-tight break-words">Tarefas Concluídas</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent class="p-4">
-            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-3">
-              <div class="p-2 bg-red-100 rounded-lg flex-shrink-0">
-                <AlertCircleIcon class="h-5 w-5 text-red-600" />
+          <CardContent class="p-3 sm:p-4">
+            <div class="flex items-start gap-3 min-h-[60px]">
+              <div class="p-2 bg-yellow-100 rounded-lg flex-shrink-0 mt-1">
+                <ClockIcon class="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600" />
               </div>
-              <div class="text-center sm:text-left">
-                <p class="text-xl sm:text-2xl font-bold text-gray-900">{{ report.overdueTasks }}</p>
-                <p class="text-xs sm:text-sm text-gray-500">Atrasadas</p>
+              <div class="flex-1 overflow-hidden">
+                <p class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 leading-tight">{{ report.tasksByStatus.IN_PROGRESS }}</p>
+                <p class="text-xs sm:text-sm text-gray-500 leading-tight break-words">Em Progresso</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent class="p-3 sm:p-4">
+            <div class="flex items-start gap-3 min-h-[60px]">
+              <div class="p-2 bg-red-100 rounded-lg flex-shrink-0 mt-1">
+                <AlertCircleIcon class="h-4 w-4 sm:h-5 sm:w-5 text-red-600" />
+              </div>
+              <div class="flex-1 overflow-hidden">
+                <p class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 leading-tight">{{ report.overdueTasks }}</p>
+                <p class="text-xs sm:text-sm text-gray-500 leading-tight break-words">Tarefas Atrasadas</p>
               </div>
             </div>
           </CardContent>

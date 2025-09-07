@@ -28,7 +28,7 @@ const resetForm = () => {
 }
 
 const handleSubmit = async () => {
-  const updateData: any = {}
+  const updateData: { name?: string; password?: string; email?: string } = {}
 
   if (form.name !== user.value?.name) {
     updateData.name = form.name

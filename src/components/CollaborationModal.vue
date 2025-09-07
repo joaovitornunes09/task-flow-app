@@ -22,7 +22,9 @@ import { Card, CardContent } from '@/components/ui/card'
 import { apiService } from '@/services/api'
 import { useToast } from '@/composables/useToast'
 import { TrashIcon, UserPlusIcon } from 'lucide-vue-next'
-import type { Task, User, TaskCollaboration, CollaborationRole } from '@/types'
+import type { Task, User, TaskCollaboration } from '@/types'
+import { getErrorMessage } from '@/types'
+import { COLLABORATION_ROLE_OPTIONS, CollaborationRole } from '@/enums'
 
 const props = defineProps<{
   open: boolean
@@ -51,7 +53,7 @@ const errors = ref<Record<string, string>>({})
 const availableUsers = computed(() => {
   if (!props.task) return []
   const collaboratorIds = new Set(collaborators.value.map(c => c.userId))
-  collaboratorIds.add(props.task.assignedUserId) // Exclude assigned user
+  collaboratorIds.add(props.task.assignedUserId)
   return users.value.filter(user => !collaboratorIds.has(user.id))
 })
 
@@ -100,17 +102,13 @@ const addCollaborator = async () => {
       collaborators.value.push(response.data)
       newCollaborator.value = {
         userId: '',
-        role: 'COLLABORATOR'
+        role: CollaborationRole.COLLABORATOR
       }
       emit('collaboration-updated')
       toast.success('Colaborador adicionado!', 'O colaborador foi adicionado à tarefa com sucesso.')
     }
-  } catch (error: any) {
-    if (error?.response?.data?.message) {
-      errors.value.general = error.response.data.message
-    } else {
-      errors.value.general = 'Erro ao adicionar colaborador. Tente novamente.'
-    }
+  } catch (error: unknown) {
+    errors.value.general = getErrorMessage(error, 'Erro ao adicionar colaborador. Tente novamente.')
   } finally {
     addingCollaborator.value = false
   }
@@ -127,8 +125,8 @@ const removeCollaborator = async (collaboration: TaskCollaboration) => {
         emit('collaboration-updated')
         toast.success('Colaborador removido', 'O colaborador foi removido da tarefa com sucesso.')
       }
-    } catch (error: any) {
-      toast.error('Erro ao remover colaborador', error?.response?.data?.message || 'Tente novamente.')
+    } catch (error: unknown) {
+      toast.error('Erro ao remover colaborador', getErrorMessage(error, 'Tente novamente.'))
     }
   }
 }
@@ -197,7 +195,7 @@ onMounted(() => {
               <Label>Usuário</Label>
               <Select
                 :model-value="newCollaborator.userId"
-                @update:model-value="(value: any) => newCollaborator.userId = value || ''"
+                @update:model-value="(value: unknown) => newCollaborator.userId = (value as string) || ''"
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione um usuário" />
@@ -214,14 +212,15 @@ onMounted(() => {
               <Label>Função</Label>
               <Select
                 :model-value="newCollaborator.role"
-                @update:model-value="(value: any) => newCollaborator.role = value || 'COLLABORATOR'"
+                @update:model-value="(value: unknown) => newCollaborator.role = (value as CollaborationRole) || CollaborationRole.COLLABORATOR"
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="COLLABORATOR">Colaborador</SelectItem>
-                  <SelectItem value="VIEWER">Visualizador</SelectItem>
+                  <SelectItem v-for="role in COLLABORATION_ROLE_OPTIONS.filter((r: { value: CollaborationRole; label: string }) => r.value !== CollaborationRole.OWNER)" :key="role.value" :value="role.value">
+                    {{ role.label }}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>

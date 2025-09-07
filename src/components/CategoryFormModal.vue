@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label'
 import { apiService } from '@/services/api'
 import { useToast } from '@/composables/useToast'
 import type { Category } from '@/types'
+import { getErrorMessage } from '@/types'
 
 const props = defineProps<{
   open: boolean
@@ -120,12 +121,8 @@ const handleSave = async () => {
       const actionText = props.mode === 'create' ? 'criada' : 'atualizada'
       toast.success(`Categoria ${actionText} com sucesso!`, `A categoria "${response.data.name}" foi ${actionText}.`)
     }
-  } catch (error: any) {
-    if (error?.response?.data?.message) {
-      errors.value.general = error.response.data.message
-    } else {
-      errors.value.general = 'Erro ao salvar categoria. Tente novamente.'
-    }
+  } catch (error) {
+    errors.value.general = getErrorMessage(error, 'Erro ao salvar categoria. Tente novamente.')
   } finally {
     loading.value = false
   }
@@ -144,7 +141,6 @@ watch(() => props.open, (newOpen) => {
       resetForm()
     }
   } else {
-    // Reset form when modal closes
     resetForm()
   }
 })
