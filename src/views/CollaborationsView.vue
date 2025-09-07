@@ -79,6 +79,12 @@ const getStatusLabel = (status: string) => {
   }
 }
 
+const getPriorityLabel = (priority: TaskPriority | undefined) => {
+  if (!priority) return 'N/A'
+  const option = TASK_PRIORITY_OPTIONS.find(p => p.value === priority)
+  return option?.label || 'N/A'
+}
+
 onMounted(() => {
   loadCollaborations()
 })
@@ -163,7 +169,7 @@ onMounted(() => {
                     'bg-green-500': collaboration.task?.priority === TaskPriority.LOW
                   }"></div>
                   <span class="font-medium">
-                    {{ TASK_PRIORITY_OPTIONS.find(p => p.value === collaboration.task?.priority)?.label || 'N/A' }}
+                    {{ getPriorityLabel(collaboration.task?.priority) }}
                   </span>
                 </div>
               </div>
