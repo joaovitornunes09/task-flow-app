@@ -69,21 +69,19 @@ const handleLogout = async () => {
     </SidebarContent>
     
     <SidebarFooter class="bg-gradient-primary p-4">
-      <div class="flex items-center justify-between text-white">
-        <div class="flex items-center space-x-3">
-          <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-            <UserIcon class="h-4 w-4" />
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium truncate">{{ user?.name || 'Usuário' }}</p>
-            <p class="text-xs text-white/70 truncate">{{ user?.email || '' }}</p>
-          </div>
+      <div class="flex items-center text-white gap-3">
+        <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+          <UserIcon class="h-4 w-4" />
+        </div>
+        <div class="flex-1 min-w-0 overflow-hidden">
+          <p class="text-sm font-medium truncate">{{ user?.name || 'Usuário' }}</p>
+          <p class="text-xs text-white/70 truncate">{{ user?.email || '' }}</p>
         </div>
         <Button
           @click="handleLogout"
           variant="ghost"
           size="sm"
-          class="text-white hover:bg-white/10 p-2"
+          class="text-white hover:bg-white/10 p-2 flex-shrink-0"
           title="Logout"
         >
           <LogOutIcon class="h-4 w-4" />
